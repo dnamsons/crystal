@@ -132,6 +132,10 @@ jobs:
           echo "export CRYSTAL_VERSION=$CIRCLE_TAG" >> build.env
           echo "export DOCKER_TAG=$CIRCLE_TAG" >> build.env
 
+          # Snapcraft configuration
+          echo "export SNAP_GRADE=stable" >> build.env
+          echo "export SNAP_CHANNEL=edge" >> build.env
+
           cat build.env
       - persist_to_workspace:
           root: /tmp/workspace
@@ -155,6 +159,10 @@ jobs:
 
           # Build from working directory (needed for omnibus and when version does not match branch/tag)
           echo "export FORCE_GIT_TAGGED=0" >> build.env
+
+          # Snapcraft configuration
+          echo "export SNAP_GRADE=devel" >> build.env
+          echo "export SNAP_CHANNEL=edge" >> build.env
 
           cat build.env
       - persist_to_workspace:
@@ -432,6 +440,14 @@ workflows:
           filters: *per_tag
           requires:
             - dist_linux
+      - dist_snap:
+          filters: *per_tag
+          requires:
+            - dist_linux
+      - publish_snap:
+          filters: *per_tag
+          requires:
+            - dist_snap
       - test_dist_linux_on_docker:
           filters: *per_tag
           requires:
@@ -449,6 +465,7 @@ workflows:
             - dist_linux32
             - dist_darwin
             - dist_docker
+            - dist_snap
             - dist_docs
 
   nightly_release:
@@ -485,6 +502,12 @@ workflows:
       - dist_docker:
           requires:
             - dist_linux
+      - dist_snap:
+          requires:
+            - dist_linux
+      - publish_snap:
+          requires:
+            - dist_snap
       - test_dist_linux_on_docker:
           requires:
             - dist_docker
@@ -500,6 +523,7 @@ workflows:
             - dist_linux32
             - dist_darwin
             - dist_docker
+            - dist_snap
             - dist_docs
 
   maintenance_release:
