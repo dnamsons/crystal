@@ -183,6 +183,7 @@ jobs:
 
           # Snapcraft configuration
           echo "export SNAP_GRADE=devel" >> build.env
+          echo "export SNAP_CHANNEL=edge/$VERSION" >> build.env
 
           cat build.env
       - persist_to_workspace:
@@ -314,7 +315,7 @@ jobs:
       - run:
           command: |
             echo $SNAPCRAFT_LOGIN_FILE | snapcraft login --with -
-            snapcraft push /tmp/workspace/build/*.snap --release=edge
+            snapcraft push /tmp/workspace/build/*.snap --release=$SNAP_CHANNEL
 
   dist_docs:
     machine: true
