@@ -314,6 +314,9 @@ jobs:
           at: /tmp/workspace
       - run:
           command: |
+            cd /tmp/workspace/distribution-scripts
+            source build.env
+
             echo $SNAPCRAFT_LOGIN_FILE | snapcraft login --with -
             snapcraft push /tmp/workspace/build/*.snap --release=$SNAP_CHANNEL
 
