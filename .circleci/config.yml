@@ -504,30 +504,25 @@ workflows:
 
   maintenance_release:
     jobs:
-      # - test_linux:
-      #     filters: &maintenance
-      #       branches:
-      #         only:
-      #           - /release\/.+/
-      #           - /.*\bci\b.*/
-      # - test_linux32:
-      #     filters: *maintenance
-      # - test_darwin:
-      #     filters: *maintenance
-      # - check_format:
-      #     filters: *maintenance
-      - prepare_common:
+      - test_linux:
           filters: &maintenance
             branches:
               only:
                 - /release\/.+/
                 - /.*\bci\b.*/
-          # filters: *maintenance
-          # requires:
-          #   - test_linux
-          #   - test_linux32
-          #   - test_darwin
-          #   - check_format
+      - test_linux32:
+          filters: *maintenance
+      - test_darwin:
+          filters: *maintenance
+      - check_format:
+          filters: *maintenance
+      - prepare_common:
+          filters: *maintenance
+          requires:
+            - test_linux
+            - test_linux32
+            - test_darwin
+            - check_format
       - prepare_maintenance:
           filters: *maintenance
           requires:
@@ -536,18 +531,18 @@ workflows:
           filters: *maintenance
           requires:
             - prepare_maintenance
-      # - dist_linux32:
-      #     filters: *maintenance
-      #     requires:
-      #       - prepare_maintenance
-      # - dist_darwin:
-      #     filters: *maintenance
-      #     requires:
-      #       - prepare_maintenance
-      # - dist_docker:
-      #     filters: *maintenance
-      #     requires:
-      #       - dist_linux
+      - dist_linux32:
+          filters: *maintenance
+          requires:
+            - prepare_maintenance
+      - dist_darwin:
+          filters: *maintenance
+          requires:
+            - prepare_maintenance
+      - dist_docker:
+          filters: *maintenance
+          requires:
+            - dist_linux
       - dist_snap:
           filters: *maintenance
           requires:
@@ -556,25 +551,25 @@ workflows:
           filters: *maintenance
           requires:
             - dist_snap
-      # - test_dist_linux_on_docker:
-      #     filters: *maintenance
-      #     requires:
-      #       - dist_docker
-      # - publish_docker:
-      #     filters: *maintenance
-      #     requires:
-      #       - dist_docker
-      # - dist_docs:
-      #     filters: *maintenance
-      #     requires:
-      #       - dist_docker
+      - test_dist_linux_on_docker:
+          filters: *maintenance
+          requires:
+            - dist_docker
+      - publish_docker:
+          filters: *maintenance
+          requires:
+            - dist_docker
+      - dist_docs:
+          filters: *maintenance
+          requires:
+            - dist_docker
       - dist_artifacts:
           filters: *maintenance
           requires:
             - dist_linux
-            # - dist_linux32
-            # - dist_darwin
-            # - dist_docker
+            - dist_linux32
+            - dist_darwin
+            - dist_docker
             - dist_snap
-            # - dist_docs
+            - dist_docs
 
