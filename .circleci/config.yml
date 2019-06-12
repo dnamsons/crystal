@@ -314,11 +314,7 @@ jobs:
           at: /tmp/workspace
       - run:
           command: |
-            mkdir ~/.snapcraft
-            echo $SNAPCRAFT_LOGIN_FILE | base64 --decode --ignore-garbage > ~/.snapcraft/snapcraft.cfg
-
-            cd /tmp/workspace/distribution-scripts
-            source build.env
+            echo $SNAPCRAFT_LOGIN_FILE | snapcraft login --with -
             snapcraft push /tmp/workspace/build/*.snap --release=edge
 
   dist_docs:
