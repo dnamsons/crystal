@@ -295,10 +295,12 @@ jobs:
           at: /tmp/workspace
       - run:
           command: |
+            apt-get install -y make
             cd /tmp/workspace/distribution-scripts
             source build.env
             cd snapcraft
-            CRYSTAL_RELEASE_LINUX64_TARGZ=/tmp/workspace/build/crystal-$CRYSTAL_VERSION-1-linux-x86_64.tar.gz" make
+            # CRYSTAL_RELEASE_LINUX64_TARGZ=/tmp/workspace/build/crystal-$CRYSTAL_VERSION-1-linux-x86_64.tar.gz make
+            CRYSTAL_RELEASE_LINUX64_TARGZ=https://24221-6887813-gh.circle-artifacts.com/0/dist_packages/crystal-nightly-20190612-1-linux-i686.tar.gz make
       - persist_to_workspace:
           root: /tmp/workspace/distribution-scripts/snapcraft/
           paths:
@@ -312,8 +314,8 @@ jobs:
           at: /tmp/workspace
       - run:
           command: |
-            mkdir .snapcraft
-            echo $SNAPCRAFT_LOGIN_FILE | base64 --decode --ignore-garbage > .snapcraft/snapcraft.cfg
+            mkdir ~/.snapcraft
+            echo $SNAPCRAFT_LOGIN_FILE | base64 --decode --ignore-garbage > ~/.snapcraft/snapcraft.cfg
 
             cd /tmp/workspace/distribution-scripts
             source build.env
@@ -531,10 +533,10 @@ workflows:
           filters: *maintenance
           requires:
             - prepare_common
-      - dist_linux:
-          filters: *maintenance
-          requires:
-            - prepare_maintenance
+      # - dist_linux:
+      #     filters: *maintenance
+      #     requires:
+      #       - prepare_maintenance
       # - dist_linux32:
       #     filters: *maintenance
       #     requires:
@@ -550,7 +552,8 @@ workflows:
       - dist_snap:
           filters: *maintenance
           requires:
-            - dist_linux
+            - prepare_maintenance
+            # - dist_linux
       - publish_snap:
           filters: *maintenance
           requires:
@@ -570,7 +573,7 @@ workflows:
       - dist_artifacts:
           filters: *maintenance
           requires:
-            - dist_linux
+            # - dist_linux
             # - dist_linux32
             # - dist_darwin
             # - dist_docker
